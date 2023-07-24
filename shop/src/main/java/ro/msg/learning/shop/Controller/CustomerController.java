@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ro.msg.learning.shop.DTO.LocationSimpleDto;
-import ro.msg.learning.shop.Service.Implementation.LocationService;
+import ro.msg.learning.shop.DTO.CustomerSimpleDto;
+import ro.msg.learning.shop.Service.Implementation.CustomerService;
 
-@RequestMapping("/location")
+@RequestMapping("/customer")
 @RestController
-public class LocationController {
+public class CustomerController {
     @Autowired
-    private LocationService locationService;
+    private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<LocationSimpleDto> createLocation(@RequestBody LocationSimpleDto locationSimpleDto) {
-        return new ResponseEntity<>(locationService.createLocation(locationSimpleDto), HttpStatus.CREATED);
+    public ResponseEntity<CustomerSimpleDto> createCustomer(@RequestBody CustomerSimpleDto customerSimpleDto) {
+        return new ResponseEntity<>(customerService.createCustomer(customerSimpleDto), HttpStatus.CREATED);
     }
 }

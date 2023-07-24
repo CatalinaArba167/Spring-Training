@@ -21,12 +21,10 @@ public class ProductAndProductCategoryTranslatorMapper {
         productAndProductCategoryDto.setProductCategoryId(product.getProductCategory().getId());
         productAndProductCategoryDto.setProductCategoryName(product.getProductCategory().getName());
         productAndProductCategoryDto.setProductCategoryDescription(product.getProductCategory().getDescription());
-
-
         return productAndProductCategoryDto;
     }
 
-    public Product toProduct(ProductAndProductCategoryDto productAndProductCategoryDto,ProductCategory productCategory) {
+    public Product toProduct(ProductAndProductCategoryDto productAndProductCategoryDto, ProductCategory productCategory) {
         Product product = new Product();
         product.setId(productAndProductCategoryDto.getProductId());
         product.setName(productAndProductCategoryDto.getProductName());

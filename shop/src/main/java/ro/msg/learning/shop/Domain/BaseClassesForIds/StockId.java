@@ -2,9 +2,9 @@ package ro.msg.learning.shop.Domain.BaseClassesForIds;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ro.msg.learning.shop.Domain.Location;
-import ro.msg.learning.shop.Domain.Product;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -12,7 +12,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @Embeddable
-public  class StockId implements Serializable {
+@Setter
+@Getter
+public class StockId implements Serializable {
     private UUID product;
     private UUID location;
 }

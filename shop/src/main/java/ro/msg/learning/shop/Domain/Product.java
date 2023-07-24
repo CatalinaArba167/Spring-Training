@@ -8,8 +8,6 @@ import org.hibernate.type.SqlTypes;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -21,12 +19,12 @@ public class Product extends EntityId {
     private BigDecimal price;
     private Double weight;
     private String supplier;
-    @Column(name="image_url")
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne
     @JdbcTypeCode(SqlTypes.UUID)
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private ProductCategory productCategory;
 
 }

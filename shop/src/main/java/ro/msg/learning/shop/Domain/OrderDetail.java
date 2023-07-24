@@ -1,14 +1,14 @@
 package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.OrderDetailId;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @IdClass(OrderDetailId.class)
 @Table(name = "order_detail")
@@ -26,6 +26,6 @@ public class OrderDetail {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name="shipped_from")
-    private Location shippedFrom ;
+    @JoinColumn(name = "shipped_from")
+    private Location shippedFrom;
 }

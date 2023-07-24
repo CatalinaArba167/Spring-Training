@@ -11,6 +11,7 @@ import ro.msg.learning.shop.Repository.IProductCategoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,37 +21,41 @@ public class ProductCategoryService {
 
 
     public ProductCategorySimpleDto createProductCategory(ProductCategorySimpleDto productCategorySimpleDto) {
-        if(productCategoryRepository.existsByAttributes(
+        if (productCategoryRepository.existsByAttributes(
                 productCategorySimpleDto.getName(),
-                productCategorySimpleDto.getDescription())){
+                productCategorySimpleDto.getDescription())) {
             throw new ProductCategoryAlreadyExistingException(productCategorySimpleDto.getName());
         }
-        ProductCategorySimpleTranslatorMapper mapper=new ProductCategorySimpleTranslatorMapper();
-        ProductCategory productCategory=mapper.toProductCategory(productCategorySimpleDto);
+        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
+        ProductCategory productCategory = mapper.toProductCategory(productCategorySimpleDto);
         return mapper.toProductCategorySimpleDto(productCategoryRepository.save(productCategory));
     }
 
     public ProductCategorySimpleDto deleteProductCategory(UUID id) {
-        ProductCategory productCategory = productCategoryRepository.findById(id);
-        ProductCategorySimpleTranslatorMapper mapper=new ProductCategorySimpleTranslatorMapper();
+        Optional<ProductCategory> productCategory = productCategoryRepository.findById(id);
+        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
         if (productCategory != null) {
-            productCategoryRepository.delete(productCategory);
-        }
-        else {
+            productCategoryRepository.delete(productCategory.get());
+        } else {
             throw new ProductCategoryNotFoundException(id);
 
         }
-        return mapper.toProductCategorySimpleDto(productCategory);
+        return mapper.toProductCategorySimpleDto(productCategory.get());
     }
 
-    public List<ProductCategorySimpleDto> getAllProductCategories(){
+    public List<ProductCategorySimpleDto> getAllProductCategories() {
         List<ProductCategorySimpleDto> productCategorySimpleDtoList = new ArrayList<ProductCategorySimpleDto>();
-        ProductCategorySimpleTranslatorMapper mapper=new ProductCategorySimpleTranslatorMapper();
-        productCategoryRepository.findAll().forEach(productCategory ->  productCategorySimpleDtoList.add(mapper.toProductCategorySimpleDto(productCategory)));
+        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
+        productCategoryRepository.findAll().forEach(productCategory -> productCategorySimpleDtoList.add(mapper.toProductCategorySimpleDto(productCategory)));
         return productCategorySimpleDtoList;
     }
-    public ProductCategory findProductCategoryById(UUID id){
-        return productCategoryRepository.findById(id);
+
+    public ProductCategory findProductCategoryById(UUID id) throws Exception {
+        Optional<ProductCategory> productCategory = productCategoryRepository.findById(id);
+        if (productCategory.isPresent())
+            return productCategory.get();
+        else
+            throw new Exception("Could not find product category!");
     }
 
 }

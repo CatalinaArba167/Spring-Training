@@ -5,14 +5,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ro.msg.learning.shop.Domain.Product;
-import ro.msg.learning.shop.Domain.ProductCategory;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface IProductRepository extends JpaRepository<Product, Long> {
-    Product findById(UUID id);
+public interface IProductRepository extends JpaRepository<Product, UUID> {
+    Optional<Product> findById(UUID id);
 
     @Query(value = "SELECT COUNT(*) > 0 " +
             "FROM product " +

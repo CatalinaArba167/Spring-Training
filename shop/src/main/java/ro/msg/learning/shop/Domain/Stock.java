@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.StockId;
 
 @Entity
@@ -14,7 +12,7 @@ import ro.msg.learning.shop.Domain.BaseClassesForIds.StockId;
 @AllArgsConstructor
 @Data
 @Table(name = "stock")
-public class Stock  {
+public class Stock {
     private Integer quantity;
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
