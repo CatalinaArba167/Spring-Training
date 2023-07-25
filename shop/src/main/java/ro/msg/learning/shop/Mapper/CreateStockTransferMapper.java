@@ -8,20 +8,19 @@ import ro.msg.learning.shop.Domain.Stock;
 
 @Component
 public class CreateStockTransferMapper {
-    public Stock toStock(CreateStockDto createStockDto, Product product, Location location) {
-        Stock stock = new Stock();
-        stock.setQuantity(createStockDto.getQuantity());
-        stock.setLocation(location);
-        stock.setProduct(product);
-        return stock;
+    public static Stock toEntity(CreateStockDto createStockDto, Product product, Location location) {
+        return Stock.builder()
+                .quantity(createStockDto.getQuantity())
+                .location(location)
+                .product(product)
+                .build();
     }
 
-    public CreateStockDto toCreateStockDto(Stock stock) {
-        CreateStockDto createStockDto = new CreateStockDto();
-        createStockDto.setLocationId(stock.getLocation().getId());
-        createStockDto.setProductId(stock.getProduct().getId());
-        createStockDto.setQuantity(stock.getQuantity());
-        return createStockDto;
-
+    public static CreateStockDto toDto(Stock stock) {
+        return CreateStockDto.builder()
+                .locationId(stock.getLocation().getId())
+                .productId(stock.getProduct().getId())
+                .quantity(stock.getQuantity())
+                .build();
     }
 }

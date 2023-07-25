@@ -1,17 +1,19 @@
 package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.Setter;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 
 import java.math.BigDecimal;
 
 @Entity
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@Setter
+@Builder
 @Table(name = "product")
 public class Product extends EntityId {
     private String name;
@@ -23,7 +25,6 @@ public class Product extends EntityId {
     private String imageUrl;
 
     @ManyToOne
-    @JdbcTypeCode(SqlTypes.UUID)
     @JoinColumn(name = "category_id")
     private ProductCategory productCategory;
 

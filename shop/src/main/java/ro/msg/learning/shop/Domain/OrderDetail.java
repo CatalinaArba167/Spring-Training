@@ -2,14 +2,16 @@ package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.OrderDetailId;
 
 @Entity
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-@Data
+@NoArgsConstructor
+@Setter
 @IdClass(OrderDetailId.class)
 @Table(name = "order_detail")
 public class OrderDetail {

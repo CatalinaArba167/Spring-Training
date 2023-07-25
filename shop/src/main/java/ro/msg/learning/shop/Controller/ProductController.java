@@ -1,45 +1,45 @@
 package ro.msg.learning.shop.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.learning.shop.DTO.ProductAndProductCategoryDto;
-import ro.msg.learning.shop.Service.Implementation.ProductService;
+import ro.msg.learning.shop.Service.ProductService;
 
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/product")
+@RequestMapping("/products")
 @RestController
+@RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductAndProductCategoryDto> createProduct(@RequestBody ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
+    public ResponseEntity<ProductAndProductCategoryDto> create(@RequestBody ProductAndProductCategoryDto productAndProductCategoryDto) {
         return new ResponseEntity<>(productService.createProduct(productAndProductCategoryDto), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public List<ProductAndProductCategoryDto> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<ProductAndProductCategoryDto>> getAll() {
+        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProductById(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{id}")
-    public ProductAndProductCategoryDto getProductById(@PathVariable("id") UUID id) {
-        return productService.getProductAndProductCategoryById(id);
+    public ResponseEntity<ProductAndProductCategoryDto> getById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(productService.getProductAndProductCategoryById(id), HttpStatus.OK);
     }
 
     @PutMapping()
-    public void updateProduct(@RequestBody ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
-        productService.updateProduct(productAndProductCategoryDto);
+    public ResponseEntity<ProductAndProductCategoryDto> update(@RequestBody ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
+        return new ResponseEntity<>(productService.updateProduct(productAndProductCategoryDto), HttpStatus.CREATED);
     }
 
 }

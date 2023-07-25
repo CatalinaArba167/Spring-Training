@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface ILocationRepository extends JpaRepository<Location, UUID> {
-    Location findByName(String name);
+    Optional<Location> findByName(String name);
 
     Optional<Location> findById(UUID id);
 }

@@ -1,35 +1,35 @@
 package ro.msg.learning.shop.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.learning.shop.DTO.ProductCategorySimpleDto;
-import ro.msg.learning.shop.Service.Implementation.ProductCategoryService;
+import ro.msg.learning.shop.Service.ProductCategoryService;
 
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/productCategory")
+@RequestMapping("/productCategories")
 @RestController
+@RequiredArgsConstructor
 public class ProductCategoryController {
-    @Autowired
-    private ProductCategoryService productCategoryService;
+    private final ProductCategoryService productCategoryService;
 
     @PostMapping
-    public ResponseEntity<ProductCategorySimpleDto> createProductCategory(@RequestBody ProductCategorySimpleDto productCategorySimpleDto) {
+    public ResponseEntity<ProductCategorySimpleDto> create(@RequestBody ProductCategorySimpleDto productCategorySimpleDto) {
         return new ResponseEntity<>(productCategoryService.createProductCategory(productCategorySimpleDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProductCategoryById(@PathVariable UUID id) {
-        productCategoryService.deleteProductCategory(id);
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        productCategoryService.deleteProductCategory(UUID.fromString(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping()
-    public List<ProductCategorySimpleDto> getAllProductCategories() {
-        return productCategoryService.getAllProductCategories();
+    public ResponseEntity<List<ProductCategorySimpleDto>> getAll() {
+        return new ResponseEntity<>(productCategoryService.getAllProductCategories(), HttpStatus.OK);
     }
 
 }

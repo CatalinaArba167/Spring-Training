@@ -1,13 +1,12 @@
-package ro.msg.learning.shop.Service.Implementation;
+package ro.msg.learning.shop.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.DTO.ProductAndProductCategoryDto;
 import ro.msg.learning.shop.Domain.Product;
 import ro.msg.learning.shop.Domain.ProductCategory;
-import ro.msg.learning.shop.Exception.ProductAlreadyExistingException;
-import ro.msg.learning.shop.Exception.ProductCategoryNotFoundException;
-import ro.msg.learning.shop.Exception.ProductNotFoundException;
+import ro.msg.learning.shop.Exception.AlreadyExistsException;
+import ro.msg.learning.shop.Exception.NotFoundException;
 import ro.msg.learning.shop.Mapper.ProductAndProductCategoryTranslatorMapper;
 import ro.msg.learning.shop.Repository.IProductRepository;
 
@@ -17,18 +16,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
-    @Autowired
-    private ProductCategoryService productCategoryService;
-    @Autowired
-    private IProductRepository productRepository;
-    @Autowired
-    private LocationService locationService;
-    @Autowired
-    private StockService stockService;
+    public static final String PRODUCT_ALREADY_EXISTS = "Product already exists: ";
+    public static final String PRODUCT_CATEGORY_NOT_FOUND = "Product category not found: ";
+    public static final String PRODUCT_NOT_FOUND = "Product not found: ";
+    private final ProductCategoryService productCategoryService;
+    private final IProductRepository productRepository;
+    private final LocationService locationService;
+    private final StockService stockService;
 
-
-    public ProductAndProductCategoryDto createProduct(ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
+    public ProductAndProductCategoryDto createProduct(ProductAndProductCategoryDto productAndProductCategoryDto) {
         //Validate the miss of the product in the product list
         if (productRepository.existsByAttributes(
                 productAndProductCategoryDto.getProductName(),
@@ -38,31 +36,22 @@ public class ProductService {
                 productAndProductCategoryDto.getProductSupplier(),
                 productAndProductCategoryDto.getProductImageUrl(),
                 productAndProductCategoryDto.getProductCategoryId())) {
-            throw new ProductAlreadyExistingException(productAndProductCategoryDto.getProductName());
+            throw new AlreadyExistsException(PRODUCT_ALREADY_EXISTS + productAndProductCategoryDto.getProductName());
         }
         //Validate the existence of the product category in the product list
         ProductCategory productCategory = this.productCategoryService.findProductCategoryById(productAndProductCategoryDto.getProductCategoryId());
-        if (productCategory == null) {
-            throw new ProductCategoryNotFoundException(productAndProductCategoryDto.getProductId());
-        }
-
-        ProductAndProductCategoryTranslatorMapper mapper = new ProductAndProductCategoryTranslatorMapper();
-        Product newProduct = mapper.toProduct(productAndProductCategoryDto, productCategory);
-        ProductAndProductCategoryDto newProductAndProductCategoryDto = mapper.toProductAndProductCategoryDto(productRepository.save(newProduct));
-
-        return newProductAndProductCategoryDto;
+        Product newProduct = ProductAndProductCategoryTranslatorMapper.toEntity(productAndProductCategoryDto, productCategory);
+        return ProductAndProductCategoryTranslatorMapper.toDto(productRepository.save(newProduct));
     }
 
     public List<ProductAndProductCategoryDto> getAllProducts() {
         List<ProductAndProductCategoryDto> productCategorySimpleDtoList = new ArrayList<ProductAndProductCategoryDto>();
-        ProductAndProductCategoryTranslatorMapper mapper = new ProductAndProductCategoryTranslatorMapper();
-        productRepository.findAll().forEach(product -> productCategorySimpleDtoList.add(mapper.toProductAndProductCategoryDto(product)));
+        productRepository.findAll().forEach(product -> productCategorySimpleDtoList.add(ProductAndProductCategoryTranslatorMapper.toDto(product)));
         return productCategorySimpleDtoList;
     }
 
     public void deleteProduct(UUID id) {
         Optional<Product> product = productRepository.findById(id);
-        ProductAndProductCategoryTranslatorMapper mapper = new ProductAndProductCategoryTranslatorMapper();
         if (product.isPresent()) {
             //Remove stocks
             this.stockService.removeStocksForAProduct(product.get());
@@ -70,18 +59,17 @@ public class ProductService {
             productRepository.delete(product.get());
 
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(PRODUCT_NOT_FOUND + id);
 
         }
     }
 
     public ProductAndProductCategoryDto getProductAndProductCategoryById(UUID id) {
-        ProductAndProductCategoryTranslatorMapper mapper = new ProductAndProductCategoryTranslatorMapper();
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
-            return mapper.toProductAndProductCategoryDto(product.get());
+            return ProductAndProductCategoryTranslatorMapper.toDto(product.get());
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(PRODUCT_NOT_FOUND + id);
         }
     }
 
@@ -90,22 +78,22 @@ public class ProductService {
         if (product.isPresent()) {
             return product.get();
         } else {
-            throw new ProductNotFoundException(id);
+            throw new NotFoundException(PRODUCT_NOT_FOUND + id);
         }
     }
 
-    public void updateProduct(ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
+    public ProductAndProductCategoryDto updateProduct(ProductAndProductCategoryDto productAndProductCategoryDto) throws Exception {
         //Validate the existence of the product in the product list
         Optional<Product> product = productRepository.findById(productAndProductCategoryDto.getProductId());
         if (product.isPresent()) {
-            throw new ProductNotFoundException(productAndProductCategoryDto.getProductId());
+            throw new NotFoundException(PRODUCT_NOT_FOUND + productAndProductCategoryDto.getProductId());
         }
         //Validate the existence of the product category in the product list
         ProductCategory productCategory = this.productCategoryService.findProductCategoryById(productAndProductCategoryDto.getProductCategoryId());
         if (productCategory == null) {
-            throw new ProductCategoryNotFoundException(productAndProductCategoryDto.getProductId());
+            throw new NotFoundException(PRODUCT_CATEGORY_NOT_FOUND + productAndProductCategoryDto.getProductId());
         }
-        ProductAndProductCategoryTranslatorMapper mapper = new ProductAndProductCategoryTranslatorMapper();
-        System.out.println((productRepository.save(mapper.toProduct(productAndProductCategoryDto, productCategory))));
+        Product savedProduct = productRepository.save(ProductAndProductCategoryTranslatorMapper.toEntity(productAndProductCategoryDto, productCategory));
+        return ProductAndProductCategoryTranslatorMapper.toDto(savedProduct);
     }
 }

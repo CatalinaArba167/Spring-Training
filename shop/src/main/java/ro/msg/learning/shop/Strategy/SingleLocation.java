@@ -1,20 +1,20 @@
 package ro.msg.learning.shop.Strategy;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 import ro.msg.learning.shop.Domain.Location;
 import ro.msg.learning.shop.Domain.Stock;
+import ro.msg.learning.shop.Exception.NotFoundException;
 import ro.msg.learning.shop.Repository.IStockRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-@AllArgsConstructor
-public class SingleLocation implements IStrategy{
-    @Autowired
-    private IStockRepository stockRepository;
+
+@RequiredArgsConstructor
+public class SingleLocation implements IStrategy {
+    public static final String STOCK_NOT_FOUND = "Stock not found: ";
+    private final IStockRepository stockRepository;
 
     public List<Stock> retrieveSuitableStock(List<UUID> products, List<Integer> quantities) {
         //Find locations with all products
@@ -30,10 +30,14 @@ public class SingleLocation implements IStrategy{
             //For every product from the order
             for (int i = 0; i < noOfProducts; i++) {
                 //We find the quantity of the stock and check if it is enough
-                Stock stock = stockRepository.findByProductIdAndLocationId(products.get(i), possibleLocationsId.getId());
-                stoksList.add(stock);
-                if (stock.getQuantity() < quantities.get(i))
-                    enoughQuantity = false;
+                Optional<Stock> stock = stockRepository.findByProductIdAndLocationId(products.get(i), possibleLocationsId.getId());
+                if (stock.isPresent()) {
+                    stoksList.add(stock.get());
+                    if (stock.get().getQuantity() < quantities.get(i))
+                        enoughQuantity = false;
+                } else {
+                    throw new NotFoundException(STOCK_NOT_FOUND);
+                }
             }
             //if the quantity was enough for every product
             if (enoughQuantity == true) {

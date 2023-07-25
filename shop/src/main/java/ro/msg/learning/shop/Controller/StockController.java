@@ -1,15 +1,15 @@
 package ro.msg.learning.shop.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ro.msg.learning.shop.Service.Implementation.StockService;
+import ro.msg.learning.shop.Service.StockService;
 
-@RequestMapping("/stock")
+@RequestMapping("/stocks")
 @RestController
+@RequiredArgsConstructor
 public class StockController {
-    @Autowired
-    private StockService stockService;
+    private final StockService stockService;
 
 //    @PostMapping
 //    public ResponseEntity<StockSimpleDto> create(@RequestBody CreateStockDto createStockDto) throws Exception {

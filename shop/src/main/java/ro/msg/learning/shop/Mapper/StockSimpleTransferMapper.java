@@ -4,19 +4,20 @@ import ro.msg.learning.shop.DTO.StockSimpleDto;
 import ro.msg.learning.shop.Domain.Stock;
 
 public class StockSimpleTransferMapper {
-    public StockSimpleDto toStockSimpleDto(Stock stock) {
-        StockSimpleDto stockSimpleDto = new StockSimpleDto();
-        stockSimpleDto.setQuantity(stock.getQuantity());
-        stockSimpleDto.setProduct(stock.getProduct());
-        stockSimpleDto.setLocation(stock.getLocation());
-        return stockSimpleDto;
+    public static StockSimpleDto toDto(Stock stock) {
+        return StockSimpleDto.builder()
+                .quantity(stock.getQuantity())
+                .product(stock.getProduct())
+                .location(stock.getLocation())
+                .build();
     }
 
-    public Stock toStock(StockSimpleDto stockSimpleDto) {
-        Stock stock = new Stock();
-        stock.setQuantity(stockSimpleDto.getQuantity());
-        stock.setProduct(stockSimpleDto.getProduct());
-        stock.setLocation(stockSimpleDto.getLocation());
-        return stock;
+    public static Stock toEntity(StockSimpleDto stockSimpleDto) {
+        return Stock.builder()
+                .quantity(stockSimpleDto.getQuantity())
+                .product(stockSimpleDto.getProduct())
+                .location(stockSimpleDto.getLocation())
+                .build();
+
     }
 }

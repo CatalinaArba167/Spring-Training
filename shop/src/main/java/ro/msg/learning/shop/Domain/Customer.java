@@ -4,15 +4,17 @@ package ro.msg.learning.shop.Domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Setter
 @Table(name = "customer")
 public class Customer extends EntityId {
     @Column(name = "first_name")

@@ -1,34 +1,30 @@
 package ro.msg.learning.shop.Strategy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ro.msg.learning.shop.Repository.IStockRepository;
-import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
+@RequiredArgsConstructor
 public class StrategyConfiguration {
 
-    public enum Strategy{
-        SINGLE_LOCATION,MOST_ABUNDANT_LOCATION
-    }
+    private final IStockRepository stockRepository;
     @Value("${strategy}")
     private Strategy strategy;
 
-    @Autowired
-    private IStockRepository stockRepository;
-
     @Bean
-    public IStrategy selectStrategy()
-    {
-        if(strategy.equals(Strategy.MOST_ABUNDANT_LOCATION))
-        {
+    public IStrategy selectStrategy() {
+        if (strategy.equals(Strategy.MOST_ABUNDANT_LOCATION)) {
             return new MostAbundantLocation(stockRepository);
-        }
-        else
-        {
+        } else {
             return new SingleLocation(stockRepository);
         }
+    }
+
+    public enum Strategy {
+        SINGLE_LOCATION, MOST_ABUNDANT_LOCATION
     }
 
 }

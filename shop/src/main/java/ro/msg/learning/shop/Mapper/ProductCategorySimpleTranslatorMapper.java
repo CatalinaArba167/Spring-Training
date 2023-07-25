@@ -6,19 +6,18 @@ import ro.msg.learning.shop.Domain.ProductCategory;
 
 @Component
 public class ProductCategorySimpleTranslatorMapper {
-    public ProductCategorySimpleDto toProductCategorySimpleDto(ProductCategory productCategory) {
-        ProductCategorySimpleDto productCategorySimpleDto = new ProductCategorySimpleDto();
-        productCategorySimpleDto.setId(productCategory.getId());
-        productCategorySimpleDto.setName(productCategory.getName());
-        productCategorySimpleDto.setDescription(productCategory.getDescription());
-        return productCategorySimpleDto;
+    public static ProductCategorySimpleDto toDto(ProductCategory productCategory) {
+        return ProductCategorySimpleDto.builder()
+                .id(productCategory.getId())
+                .name(productCategory.getName())
+                .description(productCategory.getDescription())
+                .build();
     }
 
-    public ProductCategory toProductCategory(ProductCategorySimpleDto productCategorySimpleDto) {
-        ProductCategory productCategory = new ProductCategory();
-        productCategory.setId(productCategorySimpleDto.getId());
-        productCategory.setName(productCategorySimpleDto.getName());
-        productCategory.setDescription(productCategorySimpleDto.getDescription());
-        return productCategory;
+    public static ProductCategory toEntity(ProductCategorySimpleDto productCategorySimpleDto) {
+        return ProductCategory.builder()
+                .name(productCategorySimpleDto.getName())
+                .description(productCategorySimpleDto.getDescription())
+                .build();
     }
 }

@@ -1,17 +1,19 @@
 package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.Setter;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 
 import java.sql.Timestamp;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Setter
+@Builder
 @Table(name = "orders")
 public class Orders extends EntityId {
     @Column(name = "created_at")
@@ -23,7 +25,6 @@ public class Orders extends EntityId {
     private String streetAddress;
 
     @ManyToOne
-    @JdbcTypeCode(SqlTypes.UUID)
     @JoinColumn(name = "customer")
     private Customer customer;
 

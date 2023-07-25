@@ -10,12 +10,13 @@ import ro.msg.learning.shop.Domain.Product;
 import ro.msg.learning.shop.Domain.Stock;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
 @Repository
 public interface IStockRepository extends JpaRepository<Stock, StockId> {
-    Stock findByProductIdAndLocationId(UUID product, UUID location);
+    Optional<Stock> findByProductIdAndLocationId(UUID product, UUID location);
 
     List<Stock> findByProduct(Product product);
 

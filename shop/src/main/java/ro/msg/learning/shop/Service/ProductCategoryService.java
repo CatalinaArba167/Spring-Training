@@ -1,11 +1,11 @@
-package ro.msg.learning.shop.Service.Implementation;
+package ro.msg.learning.shop.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.DTO.ProductCategorySimpleDto;
 import ro.msg.learning.shop.Domain.ProductCategory;
-import ro.msg.learning.shop.Exception.ProductCategoryAlreadyExistingException;
-import ro.msg.learning.shop.Exception.ProductCategoryNotFoundException;
+import ro.msg.learning.shop.Exception.AlreadyExistsException;
+import ro.msg.learning.shop.Exception.NotFoundException;
 import ro.msg.learning.shop.Mapper.ProductCategorySimpleTranslatorMapper;
 import ro.msg.learning.shop.Repository.IProductCategoryRepository;
 
@@ -15,47 +15,45 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductCategoryService {
-    @Autowired
-    private IProductCategoryRepository productCategoryRepository;
-
+    public static final String PRODUCT_CATEGORY_NOT_FOUND = "Product category not found: ";
+    public static final String PRODUCT_CATEGORY_ALREADY_EXISTS = "Product category already exists: ";
+    private final IProductCategoryRepository productCategoryRepository;
 
     public ProductCategorySimpleDto createProductCategory(ProductCategorySimpleDto productCategorySimpleDto) {
         if (productCategoryRepository.existsByAttributes(
                 productCategorySimpleDto.getName(),
                 productCategorySimpleDto.getDescription())) {
-            throw new ProductCategoryAlreadyExistingException(productCategorySimpleDto.getName());
+            throw new AlreadyExistsException(PRODUCT_CATEGORY_ALREADY_EXISTS + productCategorySimpleDto.getName());
         }
-        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
-        ProductCategory productCategory = mapper.toProductCategory(productCategorySimpleDto);
-        return mapper.toProductCategorySimpleDto(productCategoryRepository.save(productCategory));
+        ProductCategory productCategory = ProductCategorySimpleTranslatorMapper.toEntity(productCategorySimpleDto);
+        return ProductCategorySimpleTranslatorMapper.toDto(productCategoryRepository.save(productCategory));
     }
 
     public ProductCategorySimpleDto deleteProductCategory(UUID id) {
         Optional<ProductCategory> productCategory = productCategoryRepository.findById(id);
-        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
-        if (productCategory != null) {
+        if (productCategory.isPresent()) {
             productCategoryRepository.delete(productCategory.get());
         } else {
-            throw new ProductCategoryNotFoundException(id);
+            throw new NotFoundException(PRODUCT_CATEGORY_NOT_FOUND + id);
 
         }
-        return mapper.toProductCategorySimpleDto(productCategory.get());
+        return ProductCategorySimpleTranslatorMapper.toDto(productCategory.get());
     }
 
     public List<ProductCategorySimpleDto> getAllProductCategories() {
         List<ProductCategorySimpleDto> productCategorySimpleDtoList = new ArrayList<ProductCategorySimpleDto>();
-        ProductCategorySimpleTranslatorMapper mapper = new ProductCategorySimpleTranslatorMapper();
-        productCategoryRepository.findAll().forEach(productCategory -> productCategorySimpleDtoList.add(mapper.toProductCategorySimpleDto(productCategory)));
+        productCategoryRepository.findAll().forEach(productCategory -> productCategorySimpleDtoList.add(ProductCategorySimpleTranslatorMapper.toDto(productCategory)));
         return productCategorySimpleDtoList;
     }
 
-    public ProductCategory findProductCategoryById(UUID id) throws Exception {
+    public ProductCategory findProductCategoryById(UUID id) {
         Optional<ProductCategory> productCategory = productCategoryRepository.findById(id);
         if (productCategory.isPresent())
             return productCategory.get();
         else
-            throw new Exception("Could not find product category!");
+            throw new NotFoundException(PRODUCT_CATEGORY_NOT_FOUND + id);
     }
 
 }

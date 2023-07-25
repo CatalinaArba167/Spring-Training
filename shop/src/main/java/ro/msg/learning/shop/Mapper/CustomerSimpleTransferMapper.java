@@ -6,25 +6,24 @@ import ro.msg.learning.shop.Domain.Customer;
 
 @Component
 public class CustomerSimpleTransferMapper {
-    public CustomerSimpleDto toCustomerSimpleDto(Customer customer) {
-        CustomerSimpleDto dto = new CustomerSimpleDto();
-        dto.setId(customer.getId());
-        dto.setFirstName(customer.getFirstName());
-        dto.setLastName(customer.getLastName());
-        dto.setUsername(customer.getUsername());
-        dto.setPassword(customer.getPassword());
-        dto.setEmailAddress(customer.getEmailAddress());
-        return dto;
+    public static CustomerSimpleDto toDto(Customer customer) {
+        return CustomerSimpleDto.builder()
+                .id(customer.getId())
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .username(customer.getUsername())
+                .password(customer.getPassword())
+                .emailAddress(customer.getEmailAddress())
+                .build();
     }
 
-    public Customer toCustomer(CustomerSimpleDto dto) {
-        Customer customer = new Customer();
-        customer.setId(dto.getId());
-        customer.setFirstName(dto.getFirstName());
-        customer.setLastName(dto.getLastName());
-        customer.setUsername(dto.getUsername());
-        customer.setPassword(dto.getPassword());
-        customer.setEmailAddress(dto.getEmailAddress());
-        return customer;
+    public static Customer toEntity(CustomerSimpleDto dto) {
+        return Customer.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .emailAddress(dto.getEmailAddress())
+                .build();
     }
 }
