@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.DTO.CreateOrderDto;
 import ro.msg.learning.shop.DTO.OrderDetailDto;
 import ro.msg.learning.shop.Domain.*;
+import ro.msg.learning.shop.Mapper.CreateOrderTransferMapper;
 import ro.msg.learning.shop.Repository.IOrderDetailRepository;
+import ro.msg.learning.shop.Strategy.IStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +24,24 @@ public class OrderDetailService {
     @Autowired
     private StockService stockService;
 
+    @Autowired
+    private IStrategy strategy;
+
     public List<OrderDetail> createOrderDetails(CreateOrderDto createOrderDto, Orders order) throws Exception {
         List<OrderDetail> newOrderDetails = new ArrayList<>();
-        List<OrderDetailDto> orderDetailDtoList = createOrderDto.getOrderDetailDtoList();
+        CreateOrderTransferMapper mapper = null;
         // Create a stream from the orderDetailDtoList and extract the productIds, converting from String to UUID
-        List<UUID> productIdsList = orderDetailDtoList.stream()
-                .map(dto -> UUID.fromString(dto.getProductId()))
-                .collect(Collectors.toList());
-        List<Integer> quantitiesList = createOrderDto.getOrderDetailDtoList().stream()
-                .map(OrderDetailDto::getQuantity)
-                .collect(Collectors.toList());
+        List<UUID> productIdsList = mapper.toIdsList(createOrderDto);
+        List<Integer> quantitiesList = mapper.toQuantityList(createOrderDto);
         Integer noOfProducts = productIdsList.size();
-
         //The stock form a single location that must be modified
-        List<Stock> stockToBeModified = stockService.getStocksFromASingleLocation(productIdsList, quantitiesList);
+        List<Stock> stockToBeModified = strategy.retrieveSuitableStock(productIdsList, quantitiesList);
         //Modify stock
         List<Stock> modifiedStock = stockService.modifyStock(productIdsList, quantitiesList, stockToBeModified);
         System.out.println(modifiedStock);
-        //All stocks have the same location
-        Location location = modifiedStock.get(0).getLocation();
         for (int i = 0; i < noOfProducts; i++) {
+            //Get the location of the stock
+            Location location = modifiedStock.get(i).getLocation();
             //Get the product
             Product product = productService.getProductById(productIdsList.get(i));
             //Create an orderDetail

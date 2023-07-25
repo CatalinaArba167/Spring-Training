@@ -3,6 +3,7 @@ package ro.msg.learning.shop.Mapper;
 
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.DTO.CreateOrderDto;
+import ro.msg.learning.shop.DTO.OrderDetailDto;
 import ro.msg.learning.shop.Domain.Customer;
 import ro.msg.learning.shop.Domain.OrderDetail;
 import ro.msg.learning.shop.Domain.Orders;
@@ -12,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class CreateOrderTransferMapper {
@@ -32,6 +35,20 @@ public class CreateOrderTransferMapper {
     public List<OrderDetail> toOrderDetail(CreateOrderDto createOrderDto, Orders orders) {
         List<OrderDetail> orderDetailList = new ArrayList<>();
         return null;
+    }
+
+    public List<UUID> toIdsList(CreateOrderDto createOrderDto){
+        List<UUID> productIdsList = createOrderDto.getOrderDetailDtoList().stream()
+                .map(dto -> UUID.fromString(dto.getProductId()))
+                .collect(Collectors.toList());
+        return productIdsList;
+    }
+
+    public List<Integer> toQuantityList(CreateOrderDto createOrderDto){
+        List<Integer> quantitiesList = createOrderDto.getOrderDetailDtoList().stream()
+                .map(OrderDetailDto::getQuantity)
+                .collect(Collectors.toList());
+        return quantitiesList;
     }
 
     private Timestamp fromStringToTimestamp(String string) {
