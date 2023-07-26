@@ -1,10 +1,7 @@
 package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.StockId;
 
 @Entity
@@ -12,6 +9,7 @@ import ro.msg.learning.shop.Domain.BaseClassesForIds.StockId;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Getter
 @Builder
 @Table(name = "stock")
 public class Stock {

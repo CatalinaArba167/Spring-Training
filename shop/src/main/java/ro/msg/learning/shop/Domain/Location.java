@@ -2,10 +2,7 @@ package ro.msg.learning.shop.Domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 
 @Entity
@@ -13,6 +10,7 @@ import ro.msg.learning.shop.Domain.BaseClassesForIds.EntityId;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 @Table(name = "location")
 public class Location extends EntityId {
     private String name;
